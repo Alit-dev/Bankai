@@ -66,7 +66,7 @@ module.exports = {
       const senderInfo = await api.getUserInfo(event.senderID);
       const teacherName = senderInfo?.[event.senderID]?.name || "Unknown";
 
-      // Shikhano part
+      // Jodi unknown question hoy
       if (!Reply.fromApi && Reply.canLearn) {
         const learnURL = `https://sara-api-hjfe.onrender.com/sikho?data=${encodeURIComponent(Reply.question + ":" + userReply)}&teacher=${encodeURIComponent(teacherName)}`;
         await axios.get(learnURL);
@@ -74,19 +74,30 @@ module.exports = {
         // ❤️‍🩹 react
         api.setMessageReaction("❤️‍🩹", event.messageID, () => {}, true);
 
-        // Random ekta question ask
+        // Random question dibe
         const allDataRes = await axios.get("https://sara-api-hjfe.onrender.com/show=all");
         const questions = allDataRes.data?.data;
 
         if (Array.isArray(questions) && questions.length > 0) {
           const random = questions[Math.floor(Math.random() * questions.length)];
-          return api.sendMessage(` ${random.question}`, event.threadID, event.messageID);
-        } else {
-          return;
-        }
+          const newMsg = random.question;
+
+          return api.sendMessage(newMsg, event.threadID, async (err, info) => {
+            if (!err && info) {
+              global.GoatBot.onReply.set(info.messageID, {
+                commandName: "sara",
+                messageID: info.messageID,
+                question: newMsg,
+                fromApi: true,
+                canLearn: true,
+                senderName: event.senderID
+              });
+            }
+          });
+        } else return;
       }
 
-      // Jodi API answer ektu age fail korechilo, abar check kore dekhi
+      // Jodi eta random question er reply hoy
       if (Reply.fromApi && Reply.canLearn) {
         const res = await axios.get(`https://sara-api-hjfe.onrender.com/text=${encodeURIComponent(userReply)}`);
         const data = res.data;
@@ -116,7 +127,7 @@ module.exports = {
                 senderName: event.senderID
               });
             }
-          }, event.messageID);q
+          }, event.messageID);
         }
       }
 
