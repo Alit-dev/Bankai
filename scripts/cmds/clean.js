@@ -8,7 +8,7 @@ module.exports.config = {
     countdown: 5,
 };
 
-const fs = require('fs');
+const fs = require('fs-extra');
 
 // Set the onReply event
 global.GoatBot = global.GoatBot || {};
