@@ -1,4 +1,4 @@
-const fs = require('fs').promises;
+const fs = require('fs-extra').promises;
 const os = require('os');
 const moment = require('moment-timezone');
 const nodeDiskInfo = require('node-disk-info');
