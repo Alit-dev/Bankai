@@ -1,4 +1,4 @@
-const fs = require("fs");
+const fs = require("fs-extra");
 const { parse } = require("csv-parse");
 const Fuse = require("fuse.js");
 
