@@ -1,5 +1,5 @@
 const axios = require("axios");
-const fs = require("fs");
+const fs = require("fs-extra");
 const { shortenURL } = global.utils;
 
 const nusu = "https://rasin-x-apis-main.onrender.com/api/rasin/autodl?url=";
