@@ -6,7 +6,7 @@ module.exports = {
     name: "numinfo",
     author: "Dipto",
     role: 0,
-    category: "utility",
+    category: "information",
     commandCategory: "Information",
     guide: "numinfo <number>",
     version: "1.0.0"
