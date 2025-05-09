@@ -3,7 +3,7 @@ const axios = require("axios");
 module.exports = {
   config: {
     name: "fluxulta",
-    aliases: ["fluxu","flux u],
+    aliases: ["fluxu","flux u"],
     version: "2.0",
     author: "Alamin",
     countDown: 2,
