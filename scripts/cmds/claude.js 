@@ -1,0 +1,40 @@
+const axios = require("axios");
+
+module.exports = {
+  config: {
+    name: "claude",
+    aliases: ["sonnet","cl"],
+    version: "1.0",
+    author: "Developer RasinXalamin",
+    countDown: 5,
+    role: 0,
+    shortDescription: "Reply using Claude AI",
+    longDescription: "Sends reply to a message using Claude AI through API",
+    category: "ai",
+    guide: "{pn} (must be used by replying to a message)",
+  },
+
+  onStart: async function ({ message, event, args, api }) {
+    const { messageReply, threadID, messageID } = event;
+
+    // যদি args খালি হয়
+    if (args.length === 0) return message.reply("Please provide a question for CLAUDE");
+
+    // যদি reply না করে কমান্ড দেয়া হয়
+    if (!messageReply) return message.reply("Please reply to a message.");
+
+    // স্প্যাম ক্যারেক্টার থাকলে ignore করবে
+    const blockedChars = /[!_?\/3]/;
+    if (blockedChars.test(messageReply.body)) return;
+
+    try {
+      const res = await axios.get(`https://rasin-x-apis.onrender.com/api/rasin/claude?message=${encodeURIComponent(messageReply.body)}`);
+      const replyText = res.data.response || "Sorry, I couldn't get a response.";
+
+      api.sendMessage(replyText, threadID, messageID);
+    } catch (err) {
+      console.error(err);
+      message.reply("There was an error fetching response from CLAUDE API.");
+    }
+  },
+};
