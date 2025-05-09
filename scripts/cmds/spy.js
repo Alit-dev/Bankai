@@ -15,7 +15,7 @@ module.exports = {
     author: "Dipto",
     Description: "Get user information and profile photo",
     category: "information",
-    countDown: 10,
+    countDown: 1,
   },
 
   onStart: async function ({ event, message, usersData, api, args }) {
