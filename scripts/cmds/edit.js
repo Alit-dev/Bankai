@@ -34,7 +34,7 @@ module.exports = {
 
     try {
       const imgUrl = attachment.url;
-      const apiUrl = `https://api-new-dxgd.onrender.com/edit?prompt=${encodeURIComponent(prompt)}&url=${encodeURIComponent(imgUrl)}`;
+      const apiUrl = `https://alit-api-arb8.onrender.com/edit?prompt=${encodeURIComponent(prompt)}&url=${encodeURIComponent(imgUrl)}`;
 
       const res = await axios.get(apiUrl);
       const imageUrl = res.data.imageUrl;
