@@ -4,7 +4,7 @@ module.exports = {
   config: {
     name: "edit",
     aliases: [],
-    version: "1.0",
+    version: "1.1",
     author: "Alamin",
     countDown: 2,
     role: 0,
@@ -29,30 +29,31 @@ module.exports = {
     const attachment = event.messageReply.attachments[0];
     if (attachment.type !== "photo") return message.reply("Please reply to a photo only.");
 
-    // React with ⏳
     api.setMessageReaction("⏳", event.messageID, () => {}, true);
 
     try {
-      const imgUrl = attachment.url;
-      const apiUrl = `https://alit-api-arb8.onrender.com/edit?prompt=${encodeURIComponent(prompt)}&url=${encodeURIComponent(imgUrl)}`;
+      const imgUrl = encodeURIComponent(attachment.url);
+      const encodedPrompt = encodeURIComponent(prompt);
+      const apiUrl = `https://alit-x-api.onrender.com/api/edit?prompt=${encodedPrompt}&url=${imgUrl}`;
 
       const res = await axios.get(apiUrl);
-      const imageUrl = res.data.imageUrl;
+      
+      if (!res.data || !res.data.imageUrl) {
+        return message.reply("No image returned from API.");
+      }
 
-      if (!imageUrl) return message.reply("No image returned from API.");
+      const editedImageUrl = res.data.imageUrl;
 
-      // Send image
-      message.reply({
-        body: "",
-        attachment: await global.utils.getStreamFromURL(imageUrl)
+      await message.reply({
+        body: "✨ | Edited image ready!",
+        attachment: await global.utils.getStreamFromURL(editedImageUrl)
       });
 
-      // React with ✅
       api.setMessageReaction("✅", event.messageID, () => {}, true);
 
     } catch (err) {
-      console.error(err);
-      message.reply("Image edit failed.");
+      console.error("Edit command error:", err.message);
+      message.reply("Image edit failed. Please try again later.");
       api.setMessageReaction("❌", event.messageID, () => {}, true);
     }
   }
