@@ -2,13 +2,13 @@ const axios = require("axios");
 
 module.exports = {
   config: {
-    name: "sara",
+    name: "alit",
     version: "1.0",
     author: "Custom by You",
     countDown: 0,
     role: 0,
     description: {
-      en: "Auto chat & learning bot without prefix using sara-api"
+      en: "Auto chat & learning bot using Alit API"
     },
     category: "ai"
   },
@@ -16,21 +16,21 @@ module.exports = {
   onStart: async function () {},
 
   onChat: async function({ api, event }) {
-    const message = event.body && event.body.toLowerCase().trim();
+    const message = event.body?.toLowerCase().trim();
     if (!message) return;
 
-    const triggerWords = ["hi", "hello", "bby", "bot", "assalamualaikum", "kemon acho"];
+    const triggerWords = ["bby", "bbe", "hi", "hlw", "yo", "hey"];
     if (!triggerWords.includes(message)) return;
 
     try {
-      const res = await axios.get(`https://sara-api-hjfe.onrender.com/text=${encodeURIComponent(message)}`);
+      const res = await axios.get(`https://alit-x-api.onrender.com/api/sarachat?text=${encodeURIComponent(message)}`);
       const data = res.data;
 
       if (data?.answer && !data?.error) {
         return api.sendMessage(data.answer, event.threadID, (err, info) => {
           if (!err && info) {
             global.GoatBot.onReply.set(info.messageID, {
-              commandName: "sara",
+              commandName: "alit",
               messageID: info.messageID,
               question: message,
               fromApi: true,
@@ -40,10 +40,10 @@ module.exports = {
           }
         }, event.messageID);
       } else {
-        return api.sendMessage("Eita ami jani nah. Eitar uttor amake reply diye shikhai din!", event.threadID, (err, info) => {
+        return api.sendMessage("আমি এটা জানি না, আমাকে জানিয়ে দিন!", event.threadID, (err, info) => {
           if (!err && info) {
             global.GoatBot.onReply.set(info.messageID, {
-              commandName: "sara",
+              commandName: "alit",
               messageID: info.messageID,
               question: message,
               fromApi: false,
@@ -54,7 +54,7 @@ module.exports = {
         }, event.messageID);
       }
     } catch (e) {
-      return api.sendMessage("Server e somossa. Poroborti te chesta korun.", event.threadID, event.messageID);
+      return api.sendMessage("সার্ভারে সমস্যা হয়েছে, পরে আবার চেষ্টা করুন।", event.threadID, event.messageID);
     }
   },
 
@@ -66,47 +66,46 @@ module.exports = {
       const senderInfo = await api.getUserInfo(event.senderID);
       const teacherName = senderInfo?.[event.senderID]?.name || "Unknown";
 
-      // Jodi unknown question hoy
+      // Jodi unknown question er answer hoy
       if (!Reply.fromApi && Reply.canLearn) {
-        const learnURL = `https://sara-api-hjfe.onrender.com/sikho?data=${encodeURIComponent(Reply.question + ":" + userReply)}&teacher=${encodeURIComponent(teacherName)}`;
-        await axios.get(learnURL);
+        const learnURL = `https://alit-x-api.onrender.com/api/sikho?question=${encodeURIComponent(Reply.question)}&answer=${encodeURIComponent(userReply)}&teacher=${encodeURIComponent(teacherName)}`;
+        const res = await axios.get(learnURL);
 
-        // ❤️‍🩹 react
-        api.setMessageReaction("❤️‍🩹", event.messageID, () => {}, true);
+        if (res.data?.learnedQuestions) {
+          // done react
+          api.setMessageReaction("✅", event.messageID, () => {}, true);
 
-        // Random question dibe
-        const allDataRes = await axios.get("https://sara-api-hjfe.onrender.com/show=all");
-        const questions = allDataRes.data?.data;
+          // ask a random question
+          const randomRes = await axios.get("https://alit-x-api.onrender.com/api/random-q=");
+          const randomData = randomRes.data;
 
-        if (Array.isArray(questions) && questions.length > 0) {
-          const random = questions[Math.floor(Math.random() * questions.length)];
-          const newMsg = random.question;
-
-          return api.sendMessage(newMsg, event.threadID, async (err, info) => {
-            if (!err && info) {
-              global.GoatBot.onReply.set(info.messageID, {
-                commandName: "sara",
-                messageID: info.messageID,
-                question: newMsg,
-                fromApi: true,
-                canLearn: true,
-                senderName: event.senderID
-              });
-            }
-          });
-        } else return;
+          if (randomData?.question) {
+            return api.sendMessage(randomData.question, event.threadID, (err, info) => {
+              if (!err && info) {
+                global.GoatBot.onReply.set(info.messageID, {
+                  commandName: "alit",
+                  messageID: info.messageID,
+                  question: randomData.question,
+                  fromApi: true,
+                  canLearn: true,
+                  senderName: event.senderID
+                });
+              }
+            });
+          }
+        }
       }
 
-      // Jodi eta random question er reply hoy
+      // jodi eta random question er uttor hoy
       if (Reply.fromApi && Reply.canLearn) {
-        const res = await axios.get(`https://sara-api-hjfe.onrender.com/text=${encodeURIComponent(userReply)}`);
+        const res = await axios.get(`https://alit-x-api.onrender.com/api/sarachat?text=${encodeURIComponent(userReply)}`);
         const data = res.data;
 
         if (data?.answer && !data?.error) {
           return api.sendMessage(data.answer, event.threadID, (err, info) => {
             if (!err && info) {
               global.GoatBot.onReply.set(info.messageID, {
-                commandName: "sara",
+                commandName: "alit",
                 messageID: info.messageID,
                 question: userReply,
                 fromApi: true,
@@ -116,10 +115,10 @@ module.exports = {
             }
           }, event.messageID);
         } else {
-          return api.sendMessage("Eita ami jani nah. Eitar uttor amake reply diye shikhai din!", event.threadID, (err, info) => {
+          return api.sendMessage("eitar reply amar kache nei.. amr massage er reply diye amk sikhiye din!", event.threadID, (err, info) => {
             if (!err && info) {
               global.GoatBot.onReply.set(info.messageID, {
-                commandName: "sara",
+                commandName: "alit",
                 messageID: info.messageID,
                 question: userReply,
                 fromApi: false,
@@ -132,7 +131,7 @@ module.exports = {
       }
 
     } catch (e) {
-      return api.sendMessage("Sikhate giye somossa hoyeche. Poroborti te chesta korun.", event.threadID, event.messageID);
+      return api.sendMessage("server e somossa", event.threadID, event.messageID);
     }
   }
 };
